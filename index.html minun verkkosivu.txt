@@ -1,0 +1,98 @@
+<index.html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hauska Peli</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .game-section { margin-bottom: 40px; }
+        #gameArea { width: 400px; height: 400px; background-color: lightgray; position: relative; }
+        .ball { width: 30px; height: 30px; border-radius: 50%; background-color: red; position: absolute; top: 50%; left: 50%; }
+        #memory-game { display: flex; flex-wrap: wrap; width: 200px; margin: 0 auto; }
+        .card { width: 40px; height: 40px; margin: 5px; background-color: gray; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <h1>Hauska Peli</h1>
+
+    <!-- Arvauspeli -->
+    <div class="game-section">
+        <h2>Arvaa Luku</h2>
+        <p>Arvaa luku 1-10 välillä:</p>
+        <input type="number" id="guessInput">
+        <button onclick="guessNumber()">Arvaa</button>
+        <p id="guessResult"></p>
+    </div>
+
+    <!-- Pallonohjauspeli -->
+    <div class="game-section">
+        <h2>Pallon Ohjaus</h2>
+        <p>Käytä nuolinäppäimiä ohjataksesi palloa!</p>
+        <div id="gameArea">
+            <div id="ball" class="ball"></div>
+        </div>
+    </div>
+
+    <!-- Muistipeli -->
+    <div class="game-section">
+        <h2>Muistipeli</h2>
+        <p>Yhdistä samanlaiset kuvat!</p>
+        <div id="memory-game">
+            <div class="card" data-id="1"></div>
+            <div class="card" data-id="2"></div>
+            <div class="card" data-id="1"></div>
+            <div class="card" data-id="2"></div>
+        </div>
+    </div>
+
+    <script>
+        // Arvauspeli
+        let randomNumber = Math.floor(Math.random() * 10) + 1;
+        function guessNumber() {
+            const guess = document.getElementById('guessInput').value;
+            const result = document.getElementById('guessResult');
+            if (guess == randomNumber) {
+                result.textContent = "Oikein!";
+            } else {
+                result.textContent = "Väärin, yritä uudelleen!";
+            }
+        }
+
+        // Pallonohjauspeli
+        const ball = document.getElementById('ball');
+        let ballPosX = 50;
+        let ballPosY = 50;
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp') ballPosY -= 10;
+            if (event.key === 'ArrowDown') ballPosY += 10;
+            if (event.key === 'ArrowLeft') ballPosX -= 10;
+            if (event.key === 'ArrowRight') ballPosX += 10;
+            ball.style.top = ballPosY + '%';
+            ball.style.left = ballPosX + '%';
+        });
+
+        // Muistipeli
+        const cards = document.querySelectorAll('.card');
+        let flippedCards = [];
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.backgroundColor = 'white';
+                card.textContent = card.dataset.id;
+                flippedCards.push(card);
+                if (flippedCards.length === 2) {
+                    if (flippedCards[0].dataset.id !== flippedCards[1].dataset.id) {
+                        setTimeout(() => {
+                            flippedCards[0].style.backgroundColor = 'gray';
+                            flippedCards[1].style.backgroundColor = 'gray';
+                            flippedCards[0].textContent = '';
+                            flippedCards[1].textContent = '';
+                        }, 1000);
+                    }
+                    flippedCards = [];
+                }
+            });
+        });
+    </script>
+</body>
+</html>
